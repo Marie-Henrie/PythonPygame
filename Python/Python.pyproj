@@ -22,9 +22,11 @@
   </PropertyGroup>
   <ItemGroup>
     <Compile Include="alkuperainen.py" />
+    <Compile Include="Python.py" />
+    <Compile Include="startScreen.py" />
     <Compile Include="tasot.py" />
     <Compile Include="pelaajanValinta.py" />
-    <Compile Include="Python.py" />
+    <Compile Include="AnimalsHidden.py" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="images\" />
