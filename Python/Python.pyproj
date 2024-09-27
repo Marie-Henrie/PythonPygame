@@ -23,6 +23,8 @@
   <ItemGroup>
     <Compile Include="alkuperainen.py" />
     <Compile Include="Python.py" />
+    <Compile Include="alkuGame.py" />
+    <Compile Include="questions.py" />
     <Compile Include="startScreen.py" />
     <Compile Include="tasot.py" />
     <Compile Include="pelaajanValinta.py" />

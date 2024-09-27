@@ -1,6 +1,11 @@
 import pygame
 import random
 import sys
+import alkuGame
+from questions import ask_question  # Tuo ask_question-funktio toisesta tiedostosta
+
+
+alkuGame.tervehdys()
 
 # Alusta Pygame
 pygame.init()
@@ -19,6 +24,8 @@ SPEECH_BUBBLE_COLOR = (255, 255, 200)  # Vaaleankeltainen puhekupla
 # Fontti
 font = pygame.font.Font(None, 48)
 bubble_font = pygame.font.Font(None, 32)
+
+
 
 # Lataa pelaajan kissan kuva
 player_cat_img = pygame.image.load("images/cat.png")
@@ -233,12 +240,19 @@ def game_loop():
 
             # Jos kaikki kissat on kerätty, näytä viimeisen kerätyn eläimen teksti ennen siirtymistä seuraavalle tasolle
             if score == num_cats:
+
                 if last_cat_text:
                     # Näytä viimeisen eläimen puhekupla 2 sekunnin ajan
                     draw_speech_bubble(last_cat_text, (player_rect.x + cat_width // 2, player_rect.y))
                     pygame.display.update()
                     pygame.time.wait(2000)  # Näytä puhekupla 2 sekuntia ennen tason vaihtoa
-                level += 1
+                
+                    
+                # Ask the question after showing the last cat's speech bubble
+                level = ask_question(window, font, level)  # Call ask_question function and update the level
+
+                # Move to the next level    
+                #level += 1
                 pygame.time.wait(1000)  # Odota 1 sekunti ennen seuraavaa tasoa
                 break  # Poistu pelisilmästä ja siirry seuraavalle tasolle
 
