@@ -40,7 +40,8 @@ level_cats = {
         {"img": pygame.image.load("images/butterfly.png"), "text": "I love flowers I need them!", "visible": False},
         {"img": pygame.image.load("images/fox.png"), "text": "Where is my food?", "visible": False},
         {"img": pygame.image.load("images/reindeer.png"), "text": "Have you seen any moose?", "visible": False},
-        {"img": pygame.image.load("images/mouse.png"), "text": "You can see me?", "visible": False}
+        {"img": pygame.image.load("images/mouse.png"), "text": "You can see me?", "visible": False},
+        {"img": pygame.image.load("images/karhu.jpg"), "text": "I have live here forever.", "visible": False}
     ],
     2: [
         {"img": pygame.image.load("images/kissa.png"), "text": "Miau!", "visible": False},
@@ -63,6 +64,27 @@ level_cats = {
         {"img": pygame.image.load("images/koirat.png"), "text": "The dogs are outside!", "visible": False}
     ]
 }
+
+# Define questions for each level
+questions = {
+    1: {
+        "question": "Is 2 + 2 = 4?",
+        "options": ["1. Yes", "2. No"],
+        "correct": 1
+    },
+    2: {
+        "question": "Is the sky blue?",
+        "options": ["1. Yes", "2. No"],
+        "correct": 1
+    },
+    3: {
+        "question": "Do cats bark?",
+        "options": ["1. Yes", "2. No"],
+        "correct": 2
+    },
+    # Add more questions for additional levels
+}
+
 
 # Skaalaa kissan kuvat sopivaan kokoon
 for level in level_cats:
@@ -249,7 +271,7 @@ def game_loop():
                 
                     
                 # Ask the question after showing the last cat's speech bubble
-                level = ask_question(window, font, level)  # Call ask_question function and update the level
+                level = ask_question(window, font, level, questions)  # Pass the questions to the ask_question function
 
                 # Move to the next level    
                 #level += 1

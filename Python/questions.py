@@ -1,33 +1,33 @@
-# question.py
-
 import pygame
 
-def ask_question(window, font, level):
-    question_text = "Question: Is 2 + 2 = 4?"
-    option_1 = "1. Yes"
-    option_2 = "2. No"
-    correct_answer = 1  # The correct answer is "Yes" (which is 1)
+def ask_question(window, font, level, questions):
+    # Get the question and options for the current level
+    current_question = questions.get(level, {"question": "Default question?", "options": ["1. Yes", "2. No"], "correct": 1})
+    question_text = current_question["question"]
+    option_1 = current_question["options"][0]
+    option_2 = current_question["options"][1]
+    correct_answer = current_question["correct"]
 
-    # Display the question and options
+    # Function to display the question and options
     def display_question():
-        window.fill((0, 0, 0))  # Clear the window to black
+        window.fill((0, 0, 0))  # Clear the window with black
         question_surface = font.render(question_text, True, (255, 255, 255))
         option_1_surface = font.render(option_1, True, (255, 255, 255))
         option_2_surface = font.render(option_2, True, (255, 255, 255))
 
-        # Place the text on the window
+        # Display the texts in the window
         window.blit(question_surface, (50, 200))
         window.blit(option_1_surface, (50, 250))
         window.blit(option_2_surface, (50, 300))
         pygame.display.update()
 
-    # Display feedback for correct or incorrect answer
+    # Function to display feedback on whether the answer is correct or not
     def display_feedback(is_correct):
-        window.fill((0, 0, 0))  # Clear the window to black
+        window.fill((0, 0, 0))  # Clear the window with black
         if is_correct:
             feedback_surface = font.render("Correct! Moving to the next level.", True, (0, 255, 0))
         else:
-            feedback_surface = font.render("Incorrect! Moving to the next level anyway.", True, (255, 0, 0))
+            feedback_surface = font.render("Wrong! But you still move to the next level.", True, (255, 0, 0))
 
         window.blit(feedback_surface, (50, 250))
         pygame.display.update()
@@ -40,14 +40,14 @@ def ask_question(window, font, level):
         for event in pygame.event.get():
             if event.type == pygame.QUIT:
                 pygame.quit()
-                return level  # Return the current level if the user quits
+                return level
             if event.type == pygame.KEYDOWN:
-                if event.key == pygame.K_1:  # If the player selects "Yes"
+                if event.key == pygame.K_1:  # If player selects option 1
                     display_feedback(correct_answer == 1)  # Show feedback
                     waiting_for_input = False
-                elif event.key == pygame.K_2:  # If the player selects "No"
+                elif event.key == pygame.K_2:  # If player selects option 2
                     display_feedback(correct_answer == 2)  # Show feedback
                     waiting_for_input = False
 
-    # Return the next level, both answers move to the next level
+    # Return the next level after the question is answered
     return level + 1
