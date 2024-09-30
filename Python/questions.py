@@ -27,7 +27,7 @@ def ask_question(window, font, level, questions):
         if is_correct:
             feedback_surface = font.render("Correct! Moving to the next level.", True, (0, 255, 0))
         else:
-            feedback_surface = font.render("Wrong! But you still move to the next level.", True, (255, 0, 0))
+            feedback_surface = font.render("Wrong! Replay the level.", True, (255, 0, 0))
 
         window.blit(feedback_surface, (50, 250))
         pygame.display.update()
@@ -40,14 +40,19 @@ def ask_question(window, font, level, questions):
         for event in pygame.event.get():
             if event.type == pygame.QUIT:
                 pygame.quit()
-                return level
+                return level  # Return the current level if the game is quit
             if event.type == pygame.KEYDOWN:
                 if event.key == pygame.K_1:  # If player selects option 1
-                    display_feedback(correct_answer == 1)  # Show feedback
+                    is_correct = correct_answer == 1  # Check if answer is correct
+                    display_feedback(is_correct)  # Show feedback
                     waiting_for_input = False
                 elif event.key == pygame.K_2:  # If player selects option 2
-                    display_feedback(correct_answer == 2)  # Show feedback
+                    is_correct = correct_answer == 2  # Check if answer is correct
+                    display_feedback(is_correct)  # Show feedback
                     waiting_for_input = False
 
-    # Return the next level after the question is answered
-    return level + 1
+    # Return the next level if correct, otherwise replay the same level
+    if is_correct:
+        return level + 1  # Advance to the next level
+    else:
+        return level  # Replay the same level if the answer was wrong

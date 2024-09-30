@@ -37,7 +37,6 @@ level_cats = {
         {"img": pygame.image.load("images/fox.png"), "text": "Where is my food?", "visible": False},
         {"img": pygame.image.load("images/reindeer.png"), "text": "Have you seen any moose?", "visible": False},
         {"img": pygame.image.load("images/mouse.png"), "text": "You can see me?", "visible": False},
-        {"img": pygame.image.load("images/karhu.jpg"), "text": "I have lived here forever.", "visible": False}
     ],
     2: [
         {"img": pygame.image.load("images/kissa.png"), "text": "Miau!", "visible": False},
