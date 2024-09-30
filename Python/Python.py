@@ -260,6 +260,7 @@ def game_loop():
             level_text = font.render(f"Taso: {level}", True, WHITE)
             window.blit(level_text, (10, 50))  # Aseta tasoteksti pisteiden alle
 
+            
             # Jos kaikki kissat on kerätty, näytä viimeisen kerätyn eläimen teksti ennen siirtymistä seuraavalle tasolle
             if score == num_cats:
 
