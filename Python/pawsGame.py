@@ -1,4 +1,4 @@
-﻿import pygame
+import pygame
 import random
 import sys
 import alkuGame
