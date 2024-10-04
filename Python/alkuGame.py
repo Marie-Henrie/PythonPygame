@@ -44,7 +44,7 @@ def game_intro():
 
         # Display game idea
         draw_text("Welcome to the Game!", font, BLACK, screen, WIDTH // 2, HEIGHT // 4)
-        draw_text("The idea of the game is to move and collect points.", small_font, BLACK, screen, WIDTH // 2, HEIGHT // 4 + 50)
+        draw_text("The idea of the game is to move and find and collect animals.", small_font, BLACK, screen, WIDTH // 2, HEIGHT // 4 + 50)
         draw_text("Use arrow keys to move.", small_font, BLACK, screen, WIDTH // 2, HEIGHT // 4 + 80)
 
         # Draw Start Game button

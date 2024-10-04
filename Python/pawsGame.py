@@ -67,8 +67,8 @@ level_cats = {
 # Define questions for each level
 questions = {
     1: {
-        "question": "Is 2 + 2 = 4?",
-        "options": ["1. Yes", "2. No"],
+        "question": "Where do I live?",
+        "options": ["1. In the forest", "2. On the street"],
         "correct": 1
     },
     2: {
@@ -186,33 +186,29 @@ def create_tassunjaljet(num_tassut, player_rect):
 
     return tassunjaljet
 
-
 # Function to handle the game loop
 def game_loop():
     level = 1
-    max_level = 4
+    max_level = 4  # Define the maximum number of levels
     clock = pygame.time.Clock()
     state = 'playing'  # Possible states: 'playing', 'show_last_bubble', 'ask_question'
     speech_bubble_text = ""
     last_cat_text = ""
     score = 0
-    animal_score = 0  # Pisteet eläimistä
-    paw_score = 0  # Pisteet tassunjäljistä
+    paw_score = 0  # Pisteet tassunjäljistä (paw score)
 
-    while level <= max_level:
+    while level <= max_level:  # Continue the loop while level is <= max_level
         num_cats = level * 3
-        num_tassut = 2  # Määrä tassunjälkiä per taso
+        num_tassut = 2  # Number of paw prints per level
 
         player_rect = pygame.Rect(0, WINDOW_HEIGHT - cat_height, cat_width, cat_height)  # Player position
 
-        # Create cats
+        # Create cats and paw prints
         other_cats = create_cats(num_cats, level, player_rect)
-        # Create paws prints
         tassunjaljet = create_tassunjaljet(num_tassut, player_rect)
 
         cat_speed = 5
         score = 0  # Reset score at the start of the level
-        animal_score = 0  # Reset animal score at the start of the level
         paw_score = 0  # Reset paw score at the start of the level
         speech_bubble_active = False
         speech_bubble_timer = 0
@@ -228,6 +224,7 @@ def game_loop():
                     sys.exit()
 
             if state == 'playing':
+                # Player movement logic
                 keys = pygame.key.get_pressed()
                 if keys[pygame.K_LEFT]:
                     player_rect.x -= cat_speed
@@ -238,14 +235,13 @@ def game_loop():
                 if keys[pygame.K_DOWN]:
                     player_rect.y += cat_speed
 
-                # Ensure player cat stays within the window bounds
+                # Ensure player stays within the window
                 player_rect.x = max(0, min(WINDOW_WIDTH - cat_width, player_rect.x))
                 player_rect.y = max(0, min(WINDOW_HEIGHT - cat_height, player_rect.y))
 
                 # Draw background and player
                 window.blit(background_images[level - 1], (0, 0))
                 window.blit(player_cat_img, player_rect)
-
 
                 # Check collisions with paw prints
                 for tassu in tassunjaljet:
@@ -258,18 +254,15 @@ def game_loop():
                     if not tassu["collected"]:
                         window.blit(tassu["img"], tassu["rect"])
 
-
-               # Check collisions and activate speech bubble if necessary
+                # Check collisions with cats
                 for cat in other_cats:
                     if not cat["visible"] and player_rect.colliderect(cat["rect"]):
                         cat["visible"] = True
-                        animal_score += 1  # Päivitetään eläimien pisteitä
-                        if animal_score == num_cats:  # Kaikki eläimet on kerätty
+                        score += 1  # Update score when collecting a cat
+                        if score == num_cats:  # All cats collected
                             last_cat_text = cat["text"]
                             state = 'show_last_bubble'
-                            pygame.display.update()  # Päivitetään ruutu ennen tilan vaihtoa
-                            pygame.time.wait(2000)  # Viive viimeisen puhekuplan näyttämiseksi (2 sekuntia)
-                            break  # Lopeta törmäystarkistus, kun tila on asetettu
+                            break
                         else:
                             speech_bubble_text = cat["text"]
                             speech_bubble_active = True
@@ -280,41 +273,36 @@ def game_loop():
                     if cat["visible"]:
                         window.blit(cat["img"], cat["rect"])
 
-                # Handle speech bubble display for collected cats
+                # Handle speech bubble display
                 if speech_bubble_active:
                     draw_speech_bubble(speech_bubble_text, (player_rect.x + cat_width // 2, player_rect.y))
                     speech_bubble_timer += 1
-                    if speech_bubble_timer > 120:  # Show for 2 seconds (60 FPS * 2 seconds)
+                    if speech_bubble_timer > 120:  # 2 seconds
                         speech_bubble_active = False
                         speech_bubble_timer = 0
 
-                # Display animal score with a unique background
-                pygame.draw.rect(window, TASO_BG_COLOR, (10, 10, 200, 40))  # Draw background for animal score
-                animal_score_text = font.render(f"Animals: {animal_score}/{num_cats}", True, BLACK)
-                window.blit(animal_score_text, (10, 10))  # Position top-left corner
+                # Display scores
+                pygame.draw.rect(window, TASO_BG_COLOR, (10, 10, 200, 40))
+                animal_score_text = font.render(f"Animals: {score}/{num_cats}", True, BLACK)
+                window.blit(animal_score_text, (10, 10))
 
-                # Display paw score with a unique background
-                pygame.draw.rect(window, TASSUNJALKI_BG_COLOR, (10, 60, 200, 40))  # Draw background for paw score
+                pygame.draw.rect(window, TASSUNJALKI_BG_COLOR, (10, 60, 200, 40))
                 paw_score_text = font.render(f"Paws: {paw_score}/{num_tassut}", True, BLACK)
-                window.blit(paw_score_text, (10, 60))  # Position below the animal score
+                window.blit(paw_score_text, (10, 60))
 
-                # Display level with a unique background
-                pygame.draw.rect(window, TASO_BG_COLOR, (10, 110, 200, 40))  # Draw background for level
-                level_text = font.render(f"Taso: {level}", True, BLACK)
-                window.blit(level_text, (10, 110))  # Position below the score
+                pygame.draw.rect(window, TASO_BG_COLOR, (10, 110, 200, 40))
+                level_text = font.render(f"Level: {level}", True, BLACK)
+                window.blit(level_text, (10, 110))
 
-                # If all collectibles (animals and paw prints) are collected, move to next level
-                #if animal_score == num_cats and paw_score == num_tassut:
-                if animal_score == num_cats:  # Kaikki eläimet on kerätty
-                    last_cat_text = cat["text"]
-                    state = 'show_last_bubble'
-                    pygame.display.update()  # Päivitetään ruutu heti
-                    pygame.time.wait(2000)  # Viive viimeisen puhekuplan näyttämiseksi (2 sekuntia)
-                    break  # Lopeta törmäystarkistus, kun tila on asetettu
-
+                ## All animals and paw prints collected, move to next state
+                #if score == num_cats and paw_score == num_tassut:
+                 #   last_cat_text = cat["text"]
+                 #   state = 'show_last_bubble'
+                 #   pygame.display.update()
+                 #   pygame.time.wait(2000)
+                 #   break
 
             elif state == 'show_last_bubble':
-                # Redraw background and player
                 window.blit(background_images[level - 1], (0, 0))
                 window.blit(player_cat_img, player_rect)
 
@@ -325,12 +313,9 @@ def game_loop():
 
                 # Draw the last speech bubble
                 draw_speech_bubble(last_cat_text, (player_rect.x + cat_width // 2, player_rect.y))
-    
-                pygame.display.update()  # Päivitä ruutu, jotta viimeinen puhekupla tulee varmasti näkyviin
-                pygame.time.wait(2000)  # Näytä viimeinen puhekupla 2 sekuntia ennen seuraavaa tilaa
-    
-                state = 'ask_question'  # Siirry kysymystilaan
-
+                pygame.display.update()
+                pygame.time.wait(2000)
+                state = 'ask_question' # Transition to asking question
 
             elif state == 'ask_question':
                 # Ask the level-up question
@@ -340,13 +325,14 @@ def game_loop():
                 running = False  # Exit the current level's game loop
 
             # Update the display and tick the clock
-            if state != 'show_last_bubble':  # Avoid double updating during 'show_last_bubble'
+            if state != 'show_last_bubble': # Avoid double updating during 'show_last_bubble'
                 pygame.display.update()
 
             clock.tick(60)  # Maintain 60 FPS
 
-    # End game after completing all levels
+    # Call game_over after completing all levels
     game_over()
+
 
 # Function to handle game over screen
 def game_over():
