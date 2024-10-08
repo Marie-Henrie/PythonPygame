@@ -2,7 +2,7 @@ import pygame
 
 def ask_question(window, font, level, questions):
     # Get the question and options for the current level
-    current_question = questions.get(level, {"question": "Default question?", "options": ["1. Yes", "2. No"], "correct": 1})
+    current_question = questions.get(level, {"question": "Do you wanna quick?", "options": ["1. Yes", "2. No"], "correct": 1})
     question_text = current_question["question"]
     option_1 = current_question["options"][0]
     option_2 = current_question["options"][1]

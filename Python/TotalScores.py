@@ -1,3 +1,4 @@
+
 import pygame
 import random
 import sys
@@ -149,7 +150,11 @@ def draw_speech_bubble(text, position):
         text_rect = text_surface.get_rect(center=(bubble_x + bubble_width // 2, bubble_y + 20 + i * bubble_font.get_height()))
         window.blit(text_surface, text_rect)
 
-# Function to create cats at random positions without overlapping the player or other cats
+# Define safe zone dimensions for the score display area (top-left corner)
+SAFE_ZONE_WIDTH = 220  # A bit wider than the score background area (200px width)
+SAFE_ZONE_HEIGHT = 160  # Height covering the score displays for animals, paws, and levels
+
+# Function to create cats at random positions without overlapping the player, other cats, or score display area
 def create_cats(num_cats, level, player_rect):
     cats = []
     available_cats = level_cats[level]
@@ -161,8 +166,8 @@ def create_cats(num_cats, level, player_rect):
             cat_data = random.choice(available_cats)
             new_cat_rect = pygame.Rect(x, y, cat_data["img"].get_width(), cat_data["img"].get_height())
 
-            # Ensure no collision with the player's cat
-            if player_rect.colliderect(new_cat_rect):
+            # Ensure no collision with the player's cat or safe zone
+            if player_rect.colliderect(new_cat_rect) or (x < SAFE_ZONE_WIDTH and y < SAFE_ZONE_HEIGHT):
                 continue  # Try another position
 
             # Ensure no collision with existing cats
@@ -177,6 +182,7 @@ def create_cats(num_cats, level, player_rect):
                 break
 
     return cats
+
 
 # Function to create paw prints at random positions
 def create_tassunjaljet(num_tassut, player_rect):
@@ -199,16 +205,75 @@ def create_tassunjaljet(num_tassut, player_rect):
 
     return tassunjaljet
 
+def draw_speech_bubble(text, position):
+    # Define bubble padding, size, and position
+    bubble_padding = 10
+    max_bubble_width = 200
+    bubble_offset_y = 50  # Offset to position the bubble above the animal
+
+    # Prepare the font for the bubble text
+    font = pygame.font.SysFont(None, 24)
+
+    # Split the text into words to handle wrapping within the bubble
+    words = text.split()
+    lines = []
+    current_line = ""
+
+    # Create lines that fit within the max bubble width
+    for word in words:
+        if font.size(current_line + word)[0] <= max_bubble_width:
+            current_line += word + " "
+        else:
+            lines.append(current_line)
+            current_line = word + " "
+    if current_line:
+        lines.append(current_line)
+
+    # Calculate the width and height of the bubble
+    bubble_width = max(font.size(line)[0] for line in lines) + 2 * bubble_padding
+    bubble_height = (font.size(lines[0])[1] * len(lines)) + 2 * bubble_padding
+
+    # Position the bubble above the animal, with an offset to avoid overlapping
+    bubble_x = position[0] - bubble_width // 2
+    bubble_y = position[1] - bubble_height - bubble_offset_y
+
+    # Ensure the bubble doesn't go off-screen (adjust boundaries)
+    if bubble_x < 0:
+        bubble_x = 0
+    if bubble_x + bubble_width > WINDOW_WIDTH:
+        bubble_x = WINDOW_WIDTH - bubble_width
+    if bubble_y < 0:
+        bubble_y = 0
+
+    # Draw the speech bubble rectangle with rounded corners
+    bubble_rect = pygame.Rect(bubble_x, bubble_y, bubble_width, bubble_height)
+    pygame.draw.rect(window, WHITE, bubble_rect, border_radius=10)
+
+    # Draw the text inside the speech bubble
+    for i, line in enumerate(lines):
+        text_surface = font.render(line, True, BLACK)
+        window.blit(text_surface, (bubble_x + bubble_padding, bubble_y + bubble_padding + i * font.size(line)[1]))
+
+    # Draw a small triangle below the bubble, pointing to the animal
+    triangle_center_x = position[0]
+    triangle_points = [(triangle_center_x - 10, bubble_y + bubble_height), 
+                       (triangle_center_x + 10, bubble_y + bubble_height), 
+                       (triangle_center_x, bubble_y + bubble_height + 15)]
+    pygame.draw.polygon(window, WHITE, triangle_points)
+
+# Initialize total score and total paw score
+total_score = 0
+total_paw_score = 0
+
 # Function to handle the game loop
 def game_loop():
+    global total_score, total_paw_score  # Access the global variables
     level = 1
     max_level = 5  # Define the maximum number of levels
     clock = pygame.time.Clock()
     state = 'playing'  # Possible states: 'playing', 'show_last_bubble', 'ask_question'
     speech_bubble_text = ""
     last_cat_text = ""
-    score = 0
-    paw_score = 0  # Pisteet tassunjäljistä (paw score)
 
     while level <= max_level:  # Continue the loop while level is <= max_level
         num_cats = level + 2
@@ -239,14 +304,17 @@ def game_loop():
             if state == 'playing':
                 # Player movement logic
                 keys = pygame.key.get_pressed()
-                if keys[pygame.K_LEFT]:
-                    player_rect.x -= cat_speed
-                if keys[pygame.K_RIGHT]:
-                    player_rect.x += cat_speed
-                if keys[pygame.K_UP]:
-                    player_rect.y -= cat_speed
-                if keys[pygame.K_DOWN]:
-                    player_rect.y += cat_speed
+                
+                # Stop the player's movement while the speech bubble is active
+                if not speech_bubble_active:
+                    if keys[pygame.K_LEFT]:
+                        player_rect.x -= cat_speed
+                    if keys[pygame.K_RIGHT]:
+                        player_rect.x += cat_speed
+                    if keys[pygame.K_UP]:
+                        player_rect.y -= cat_speed
+                    if keys[pygame.K_DOWN]:
+                        player_rect.y += cat_speed
 
                 # Ensure player stays within the window
                 player_rect.x = max(0, min(WINDOW_WIDTH - cat_width, player_rect.x))
@@ -289,6 +357,8 @@ def game_loop():
                 # Handle speech bubble display
                 if speech_bubble_active:
                     draw_speech_bubble(speech_bubble_text, (player_rect.x + cat_width // 2, player_rect.y))
+                # Example in your game loop to draw the bubble above the animal
+                # Example in your game loop to draw the bubble next to the animal           
                     speech_bubble_timer += 1
                     if speech_bubble_timer > 120:  # 2 seconds
                         speech_bubble_active = False
@@ -307,7 +377,6 @@ def game_loop():
                 level_text = font.render(f"Level: {level}", True, BLACK)
                 window.blit(level_text, (10, 110))
 
-                
             elif state == 'show_last_bubble':
                 window.blit(background_images[level - 1], (0, 0))
                 window.blit(player_cat_img, player_rect)
@@ -321,17 +390,22 @@ def game_loop():
                 draw_speech_bubble(last_cat_text, (player_rect.x + cat_width // 2, player_rect.y))
                 pygame.display.update()
                 pygame.time.wait(2000)
-                state = 'ask_question' # Transition to asking question
+                state = 'ask_question'  # Transition to asking question
 
             elif state == 'ask_question':
                 # Ask the level-up question
                 level = ask_question(window, font, level, questions)
+                
+                # Accumulate total scores after each level
+                total_score += score
+                total_paw_score += paw_score
+                
                 pygame.time.wait(1000)  # Optional wait after answering the question
                 state = 'playing'  # Reset state for the next level
                 running = False  # Exit the current level's game loop
 
             # Update the display and tick the clock
-            if state != 'show_last_bubble': # Avoid double updating during 'show_last_bubble'
+            if state != 'show_last_bubble':  # Avoid double updating during 'show_last_bubble'
                 pygame.display.update()
 
             clock.tick(60)  # Maintain 60 FPS
@@ -342,11 +416,23 @@ def game_loop():
 
 # Function to handle game over screen
 def game_over():
+    global total_score, total_paw_score  # Access global variables
+    
     window.fill(WHITE)
+    
+    # Display game over message
     game_over_text = font.render("Peli ohi! Olet suorittanut kaikki tasot!", True, BLACK)
-    window.blit(game_over_text, (WINDOW_WIDTH // 2 - game_over_text.get_width() // 2, WINDOW_HEIGHT // 2 - 50))
+    window.blit(game_over_text, (WINDOW_WIDTH // 2 - game_over_text.get_width() // 2, WINDOW_HEIGHT // 2 - 150))
+    
+    # Display total score and total paw score
+    final_score_text = font.render(f"Total collect of animals: {total_score}", True, BLACK)
+    window.blit(final_score_text, (WINDOW_WIDTH // 2 - final_score_text.get_width() // 2, WINDOW_HEIGHT // 2 - 50))
+    
+    final_paw_score_text = font.render(f"Total collect of paws: {total_paw_score}", True, BLACK)
+    window.blit(final_paw_score_text, (WINDOW_WIDTH // 2 - final_paw_score_text.get_width() // 2, WINDOW_HEIGHT // 2 + 50))
+    
     pygame.display.update()
-    pygame.time.wait(3000)  # Wait for 3 seconds before quitting
+    pygame.time.wait(5000)  # Wait for 5 seconds before quitting
     pygame.quit()
     sys.exit()
 
