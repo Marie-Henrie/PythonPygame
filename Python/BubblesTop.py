@@ -50,25 +50,40 @@ level_cats = {
         {"img": pygame.image.load("images/koira.png"), "text": "Hau hau!", "visible": False},
         {"img": pygame.image.load("images/lintu.png"), "text": "I sing what I want.", "visible": False},
         {"img": pygame.image.load("images/peura.png"), "text": "I am Bambi.", "visible": False},
-        {"img": pygame.image.load("images/karhu.png"), "text": "Karhu karjuu!", "visible": False}
+        {"img": pygame.image.load("images/karhu.png"), "text": "Karhu karjuu!", "visible": False},
+        {"img": pygame.image.load("images/kirahvi.png"), "text": "I sing what I want.", "visible": False},
+        {"img": pygame.image.load("images/nukkuvaKissa.png"), "text": "I am Bambi.", "visible": False},
+        {"img": pygame.image.load("images/otter.png"), "text": "I belong in the water!", "visible": False}
     ],
     3: [
         {"img": pygame.image.load("images/orava.png"), "text": "Orava hyppii puissa!", "visible": False},
         {"img": pygame.image.load("images/kissakumara.png"), "text": "Mysterious cat!", "visible": False},
         {"img": pygame.image.load("images/orava1.png"), "text": "I live here", "visible": False},
-        {"img": pygame.image.load("images/karhuSininen.png"), "text": "Sininen karhu on harvinainen!", "visible": False}
+        {"img": pygame.image.load("images/karhuSininen.png"), "text": "Sininen karhu on harvinainen!", "visible": False},
+        {"img": pygame.image.load("images/fox.png"), "text": "Orava hyppii puissa!", "visible": False},
+        {"img": pygame.image.load("images/catfront.png"), "text": "Mysterious cat!", "visible": False},
+        {"img": pygame.image.load("images/catPlay.png"), "text": "I live here", "visible": False},
+        {"img": pygame.image.load("images/ampiainen.png"), "text": "Sininen karhu on harvinainen!", "visible": False}
     ],
     4: [
         {"img": pygame.image.load("images/kala.png"), "text": "Fish in the water", "visible": False},
         {"img": pygame.image.load("images/janis.png"), "text": "A big jump!", "visible": False},
         {"img": pygame.image.load("images/ketturepolainen.png"), "text": "Kettu Repolainen is wise!", "visible": False},
-        {"img": pygame.image.load("images/koirat.png"), "text": "The dogs are outside!", "visible": False}
+        {"img": pygame.image.load("images/koirat.png"), "text": "The dogs are outside!", "visible": False},
+        {"img": pygame.image.load("images/forestReindeer.png"), "text": "Orava hyppii puissa!", "visible": False},
+        {"img": pygame.image.load("images/butterflyOrange.png"), "text": "Mysterious cat!", "visible": False},
+        {"img": pygame.image.load("images/snake.png"), "text": "I live here", "visible": False},
+        {"img": pygame.image.load("images/wolf.png"), "text": "Sininen karhu on harvinainen!", "visible": False}
     ],
     5: [
         {"img": pygame.image.load("images/bearfront.png"), "text": "Fish in the water", "visible": False},
         {"img": pygame.image.load("images/catwalking.png"), "text": "I love trees!", "visible": False},
         {"img": pygame.image.load("images/rabbit.png"), "text": "I just saw a fox!", "visible": False},
-        {"img": pygame.image.load("images/wolf.png"), "text": "I need your help!", "visible": False}
+        {"img": pygame.image.load("images/wolf.png"), "text": "I need your help!", "visible": False},
+        {"img": pygame.image.load("images/orava.png"), "text": "Orava hyppii puissa!", "visible": False},
+        {"img": pygame.image.load("images/kissakumara.png"), "text": "Mysterious cat!", "visible": False},
+        {"img": pygame.image.load("images/pesukarhu.png"), "text": "I live here", "visible": False},
+        {"img": pygame.image.load("images/otter.png"), "text": "Sininen karhu on harvinainen!", "visible": False}
     ]
 }
 
@@ -173,31 +188,43 @@ def create_cats(num_cats, level, player_rect):
     cats = []
     available_cats = level_cats[level]
 
-    for _ in range(num_cats):
-        while True:
-            x = random.randint(0, WINDOW_WIDTH - cat_width)
-            y = random.randint(0, WINDOW_HEIGHT - cat_height)
-            cat_data = random.choice(available_cats)
-            new_cat_rect = pygame.Rect(x, y, cat_data["img"].get_width(), cat_data["img"].get_height())
+    # List to track used animal indices
+    used_indices = set()
 
+    # Create a list to hold valid positions
+    valid_positions = []
+
+    # Populate valid positions within the window
+    for x in range(0, WINDOW_WIDTH - cat_width, cat_width):  # Incrementing by cat_width to avoid overlaps
+        for y in range(0, WINDOW_HEIGHT - cat_height, cat_height):  # Same for height
+            new_cat_rect = pygame.Rect(x, y, cat_width, cat_height)
             # Ensure no collision with the player's cat or safe zone
             if player_rect.colliderect(new_cat_rect) or (x < SAFE_ZONE_WIDTH and y < SAFE_ZONE_HEIGHT):
-                continue  # Try another position
+                continue  # Skip this position
 
             # Ensure no collision with the speech bubble area
             if new_cat_rect.colliderect(BUBBLE_RECT):
-                continue  # Try another position
+                continue  # Skip this position
 
-            # Ensure no collision with existing cats
-            collision = False
-            for cat in cats:
-                if new_cat_rect.colliderect(cat["rect"]):
-                    collision = True
-                    break
+            valid_positions.append((x, y))  # Add valid positions to the list
 
-            if not collision:
-                cats.append({"rect": new_cat_rect, "img": cat_data["img"], "text": cat_data["text"], "visible": False})
-                break
+    # Shuffle valid positions to randomize placement
+    random.shuffle(valid_positions)
+
+    # Select cats without repeating within the same level
+    for i in range(min(num_cats, len(valid_positions), len(available_cats))):  # Limit to available valid positions and available cats
+        # Randomly select an unused index from available_cats
+        cat_index = random.choice([index for index in range(len(available_cats)) if index not in used_indices])
+        used_indices.add(cat_index)  # Mark this index as used
+        
+        # Get the cat data using the selected index
+        cat_data = available_cats[cat_index]
+        
+        # Get the corresponding position from valid_positions
+        x, y = valid_positions[i]
+        new_cat_rect = pygame.Rect(x, y, cat_data["img"].get_width(), cat_data["img"].get_height())
+        
+        cats.append({"rect": new_cat_rect, "img": cat_data["img"], "text": cat_data["text"], "visible": False})
 
     return cats
 
