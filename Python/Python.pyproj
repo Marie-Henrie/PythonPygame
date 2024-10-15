@@ -4,7 +4,7 @@
     <SchemaVersion>2.0</SchemaVersion>
     <ProjectGuid>604fe9fb-bc69-43b2-b306-5dab5152f338</ProjectGuid>
     <ProjectHome>.</ProjectHome>
-    <StartupFile>BubblesTop.py</StartupFile>
+    <StartupFile>main.py</StartupFile>
     <SearchPath>
     </SearchPath>
     <WorkingDirectory>.</WorkingDirectory>
@@ -22,7 +22,7 @@
   </PropertyGroup>
   <ItemGroup>
     <Compile Include="alkuperainen.py" />
-    <Compile Include="BubblesTop.py" />
+    <Compile Include="main.py" />
     <Compile Include="pawsGame.py" />
     <Compile Include="pawscollector.py" />
     <Compile Include="tassut.py" />
