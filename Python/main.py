@@ -51,40 +51,40 @@ level_cats = {
         {"img": pygame.image.load("images/koira.png"), "text": "Hau hau!", "visible": False},
         {"img": pygame.image.load("images/lintu.png"), "text": "I sing what I want.", "visible": False},
         {"img": pygame.image.load("images/peura.png"), "text": "I am Bambi.", "visible": False},
-        {"img": pygame.image.load("images/karhu.png"), "text": "Karhu karjuu!", "visible": False},
+        {"img": pygame.image.load("images/karhu.png"), "text": "The bear roars!", "visible": False},
         {"img": pygame.image.load("images/kirahvi.png"), "text": "I sing what I want.", "visible": False},
-        {"img": pygame.image.load("images/nukkuvaKissa.png"), "text": "I am Bambi.", "visible": False},
+        {"img": pygame.image.load("images/nukkuvaKissa.png"), "text": "I am sleeping.", "visible": False},
         {"img": pygame.image.load("images/otter.png"), "text": "I belong in the water!", "visible": False}
     ],
     3: [
-        {"img": pygame.image.load("images/orava.png"), "text": "Orava hyppii puissa!", "visible": False},
+        {"img": pygame.image.load("images/orava.png"), "text": "The squirrel is jumping in the trees!", "visible": False},
         {"img": pygame.image.load("images/kissakumara.png"), "text": "Mysterious cat!", "visible": False},
-        {"img": pygame.image.load("images/orava1.png"), "text": "I live here", "visible": False},
-        {"img": pygame.image.load("images/karhuSininen.png"), "text": "Sininen karhu on harvinainen!", "visible": False},
-        {"img": pygame.image.load("images/fox.png"), "text": "Orava hyppii puissa!", "visible": False},
+        {"img": pygame.image.load("images/orava1.png"), "text": "I live here.", "visible": False},
+        {"img": pygame.image.load("images/karhuSininen.png"), "text": "The blue bear is rare!", "visible": False},
+        {"img": pygame.image.load("images/fox.png"), "text": "Where is my food?!", "visible": False},
         {"img": pygame.image.load("images/catfront.png"), "text": "Mysterious cat!", "visible": False},
-        {"img": pygame.image.load("images/catPlay.png"), "text": "I live here", "visible": False},
-        {"img": pygame.image.load("images/ampiainen.png"), "text": "Sininen karhu on harvinainen!", "visible": False}
+        {"img": pygame.image.load("images/catPlay.png"), "text": "I live here.", "visible": False},
+        {"img": pygame.image.load("images/ampiainen.png"), "text": "Where is my flower?", "visible": False}
     ],
     4: [
-        {"img": pygame.image.load("images/kala.png"), "text": "Fish in the water", "visible": False},
+        {"img": pygame.image.load("images/kala.png"), "text": "Fish in the water.", "visible": False},
         {"img": pygame.image.load("images/janis.png"), "text": "A big jump!", "visible": False},
-        {"img": pygame.image.load("images/ketturepolainen.png"), "text": "Kettu Repolainen is wise!", "visible": False},
+        {"img": pygame.image.load("images/ketturepolainen.png"), "text": "Fox Repolainen is wise!", "visible": False},
         {"img": pygame.image.load("images/koirat.png"), "text": "The dogs are outside!", "visible": False},
-        {"img": pygame.image.load("images/forestReindeer.png"), "text": "Orava hyppii puissa!", "visible": False},
+        {"img": pygame.image.load("images/forestReindeer.png"), "text": "Have you seen any moose?", "visible": False},
         {"img": pygame.image.load("images/butterflyOrange.png"), "text": "Mysterious cat!", "visible": False},
-        {"img": pygame.image.load("images/snake.png"), "text": "I live here", "visible": False},
-        {"img": pygame.image.load("images/wolf.png"), "text": "Sininen karhu on harvinainen!", "visible": False}
+        {"img": pygame.image.load("images/snake.png"), "text": "I live here.", "visible": False},
+        {"img": pygame.image.load("images/wolf.png"), "text": "Leave me alone.", "visible": False}
     ],
     5: [
         {"img": pygame.image.load("images/bearfront.png"), "text": "Fish in the water", "visible": False},
         {"img": pygame.image.load("images/catwalking.png"), "text": "I love trees!", "visible": False},
         {"img": pygame.image.load("images/rabbit.png"), "text": "I just saw a fox!", "visible": False},
         {"img": pygame.image.load("images/wolf.png"), "text": "I need your help!", "visible": False},
-        {"img": pygame.image.load("images/orava.png"), "text": "Orava hyppii puissa!", "visible": False},
+        {"img": pygame.image.load("images/orava.png"), "text": "I live here!", "visible": False},
         {"img": pygame.image.load("images/kissakumara.png"), "text": "Mysterious cat!", "visible": False},
         {"img": pygame.image.load("images/pesukarhu.png"), "text": "I live here", "visible": False},
-        {"img": pygame.image.load("images/otter.png"), "text": "Sininen karhu on harvinainen!", "visible": False}
+        {"img": pygame.image.load("images/otter.png"), "text": "I love water.", "visible": False}
     ]
 }
 
@@ -440,7 +440,7 @@ def game_over():
     window.fill(WHITE)
     
     # Display game over message
-    game_over_text = font.render("Peli ohi! Olet suorittanut kaikki tasot!", True, BLACK)
+    game_over_text = font.render("Game over! You have completed all the levels!", True, BLACK)
     window.blit(game_over_text, (WINDOW_WIDTH // 2 - game_over_text.get_width() // 2, WINDOW_HEIGHT // 2 - 150))
     
     # Display total score and total paw score
