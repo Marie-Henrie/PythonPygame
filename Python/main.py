@@ -7,6 +7,9 @@ import asyncio
 import alkuGame
 from questions import ask_question  # Import the ask_question function from another file
 
+#This is the Mystic Forest game, the main idea is to find all animals 
+#who are hidden in forest in different levels.
+
 # Initialize the game
 alkuGame.tervehdys()
 pygame.init()
